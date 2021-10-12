@@ -1,0 +1,9 @@
+.vscode/
+.vs/
+.idea/
+*~
+
+bin/
+obj/
+
+service_account.json
