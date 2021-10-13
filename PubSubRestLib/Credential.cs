@@ -10,20 +10,20 @@ namespace PubSubRestLib
 {
     public class Credential
     {
-        private readonly ServiceAccount _serviceAccount;
+        public ServiceAccount ServiceAccount { get; }
         private readonly RSA _privateKey;
         private const string PubSubScope = "https://www.googleapis.com/auth/pubsub";
 
         public Credential(string serviceAccountJson)
         {
             var jsonStr = File.ReadAllText(serviceAccountJson);
-            _serviceAccount = JsonSerializer.Deserialize<ServiceAccount>(jsonStr);
-            if (_serviceAccount == null)
+            ServiceAccount = JsonSerializer.Deserialize<ServiceAccount>(jsonStr);
+            if (ServiceAccount == null)
             {
                 throw new ArgumentException("invalid service_account.json");
             }
-            
-            _privateKey = ParsePrivateKey(_serviceAccount.PrivateKey);
+
+            _privateKey = ParsePrivateKey(ServiceAccount.PrivateKey);
         }
 
         private class JwtHeader
@@ -53,7 +53,7 @@ namespace PubSubRestLib
             var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var claim = new JwtClaim
             {
-                Issuer = _serviceAccount.ClientEmail,
+                Issuer = ServiceAccount.ClientEmail,
                 Scope = PubSubScope,
                 Audience = "https://www.googleapis.com/oauth2/v4/token",
                 Expiration = now + 3600,
